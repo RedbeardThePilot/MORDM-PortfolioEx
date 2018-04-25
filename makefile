@@ -1,6 +1,6 @@
 # Makefile for lake problem
 CC = g++
-FLAGS = -Wall -O3 -Wno-unused-local-typedefs
+CFLAGS = -Wall -O3 -Wno-unused-local-typedefs -ggdb
 INCL = -I boost_1_56_0 
 
 SOURCES = $(wildcard *.cpp)
