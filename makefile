@@ -5,7 +5,7 @@ INCL = -I boost_1_56_0
 
 SOURCES = $(wildcard *.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
-EXE = lake.exe
+EXE = portfolio.exe
 
 all: $(SOURCES) $(EXE)
 	rm $(OBJECTS)
