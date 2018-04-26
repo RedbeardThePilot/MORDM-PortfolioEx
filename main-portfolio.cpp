@@ -45,7 +45,7 @@
 #define nPrograms 22
 #define cost_threshold 30000
 
-double bauScale, ssScale, costScale;
+double bauScale, ssScale, costScale, budgetScale;
 
 int nvars = nPrograms;
 int nobjs = 3;
@@ -59,21 +59,26 @@ void portfolio_problem(double* vars, double* objs, double* consts);
 
 void portfolio_problem(double* vars, double* objs, double* consts) {
 	double bau = 0, ss = 0, cost = 0;
+	int optIdx; // Option Index
+	vector<int> progOpts;
+	progOpts.assign(vars, vars + nvars);
 
 	for (int progIdx = 0; progIdx < nPrograms; progIdx++) {
 		// new state: previous state - decay + recycling + pollution
-		bau += modelmat[4 * progIdx][0];
-		ss += modelmat[4 * progIdx][1];
-		cost += modelmat[4 * progIdx][2];
+		optIdx = progOpts[progIdx];
+
+		bau += modelmat[4 * progIdx + optIdx][0];
+		ss += modelmat[4 * progIdx + optIdx][1];
+		cost += modelmat[4 * progIdx + optIdx][2];
 
 	}
 
 	// Calculate minimization objectives (defined in comments at beginning of file)
-	objs[0] = bau;
-	objs[1] = ss;
-	objs[2] = cost;
+	objs[0] = bau * bauScale;
+	objs[1] = ss * ssScale;
+	objs[2] = cost * costScale;
 
-	consts[0] = max(0.0, cost);
+	consts[0] = max(0.0, cost - cost_threshold * budgetScale);
 }
 
 //double root_function(double x) {
@@ -94,6 +99,7 @@ int main(int argc, char* argv[]) {
 	bauScale = 1.0;
 	ssScale = 1.0;
 	costScale = 1.0;
+	budgetScale = 1.0;
 
 	/* read the command line arguments, if present (for openMORDM) */
 	int opt;
@@ -110,6 +116,9 @@ int main(int argc, char* argv[]) {
 			ssScale = atof(optarg);
 			break;
 		case 'c': //Cost Scale
+			costScale = atof(optarg);
+			break;
+		case 'f': //Funds/Budget Scale
 			costScale = atof(optarg);
 			break;
 		case '?':
