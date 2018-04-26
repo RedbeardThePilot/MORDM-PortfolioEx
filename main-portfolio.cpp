@@ -43,7 +43,7 @@
 #include "modeldfn.h"
 
 #define nPrograms 22
-#define cost_threshold 30000000000
+#define cost_threshold 35000
 
 double bauScale, ssScale, costScale, budgetScale;
 
@@ -78,7 +78,7 @@ void portfolio_problem(double* vars, double* objs, double* consts) {
 	objs[1] = ss * ssScale;
 	objs[2] = cost * costScale;
 
-	consts[0] = max(0.0, cost_threshold * budgetScale - cost);
+	consts[0] = max(0.0, cost - cost_threshold * budgetScale);
 }
 
 //double root_function(double x) {
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
 	/* read the command line arguments, if present (for openMORDM) */
 	int opt;
 
-	while ((opt = getopt(argc, argv, "b:q:m:s:d:p:")) != -1) {
+	while ((opt = getopt(argc, argv, "b:s:c:f:")) != -1) {
 		switch (opt) {
 		case 'b': //Business as Usual Scale
 			bauScale = atof(optarg);
