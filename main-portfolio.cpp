@@ -55,21 +55,20 @@ namespace ublas = boost::numeric::ublas;
 namespace tools = boost::math::tools;
 using namespace std;
 
-void portfolio_problem(double* vars, double* objs, double* consts);
+void portfolio_problem(double* vars, double* objs, double* consts, double* uncertainty);
 
-void portfolio_problem(double* vars, double* objs, double* consts) {
+void portfolio_problem(double* vars, double* objs, double* consts, double* uncertainty) {
 	double bau = 0, ss = 0, cost = 0;
 	int optIdx; // Option Index
 	vector<int> progOpts;
 	progOpts.assign(vars, vars + nvars);
 
 	for (int progIdx = 0; progIdx < nPrograms; progIdx++) {
-		// new state: previous state - decay + recycling + pollution
 		optIdx = progOpts[progIdx];
 
-		bau += modelmat[4 * progIdx + optIdx][0];
-		ss += modelmat[4 * progIdx + optIdx][1];
-		cost += modelmat[4 * progIdx + optIdx][2];
+		bau += uncertainty[progIdx] * modelmat[4 * progIdx + optIdx][0];
+		ss += uncertainty[progIdx] * modelmat[4 * progIdx + optIdx][1];
+		cost += uncertainty[progIdx] * modelmat[4 * progIdx + optIdx][2];
 
 	}
 
@@ -93,6 +92,7 @@ int main(int argc, char* argv[]) {
 	double vars[nvars];
 	double objs[nobjs];
 	double consts[nconsts];
+	double uncertainty[nPrograms];
 
 	/* Initialize defaults */
 	//Assume noble intent, polling of DMs is an accurate:
@@ -100,23 +100,90 @@ int main(int argc, char* argv[]) {
 	ssScale = 1.0;
 	costScale = 1.0;
 	budgetScale = 1.0;
+	fill_n(uncertainty, 22, 1);
 
 	/* read the command line arguments, if present (for openMORDM) */
 	int opt;
 
-	while ((opt = getopt(argc, argv, "b:s:c:f:")) != -1) {
+	while ((opt = getopt(argc, argv, "a:b:c:d:e:f:g:h:i:j:k:l:m:n:o:p:q:r:s:t:u:v:w:x:y:z:")) != -1) {
 		switch (opt) {
-		case 'b': //Business as Usual Scale
+		case 'w': //Business as Usual Scale
 			bauScale = atof(optarg);
 			break;
-		case 's':
+		case 'x':
 			ssScale = atof(optarg);
 			break;
-		case 'c': //Cost Scale
+		case 'y': //Cost Scale
 			costScale = atof(optarg);
 			break;
-		case 'f': //Funds/Budget Scale
+		case 'z': //Funds/Budget Scale
 			costScale = atof(optarg);
+			break;
+		case 'a': //Uncertainty Multiplier for Program 1
+			uncertainty[0] = atof(optarg);
+			break;
+		case 'b': //Uncertainty Multiplier for Program 2
+			uncertainty[1] = atof(optarg);
+			break;
+		case 'c': //Uncertainty Multiplier for Program 3
+			uncertainty[2] = atof(optarg);
+			break;
+		case 'd': //Uncertainty Multiplier for Program 4
+			uncertainty[3] = atof(optarg);
+			break;
+		case 'e': //Uncertainty Multiplier for Program 5
+			uncertainty[4] = atof(optarg);
+			break;
+		case 'f': //Uncertainty Multiplier for Program 6
+			uncertainty[5] = atof(optarg);
+			break;
+		case 'g': //Uncertainty Multiplier for Program 7
+			uncertainty[6] = atof(optarg);
+			break;
+		case 'h': //Uncertainty Multiplier for Program 8
+			uncertainty[7] = atof(optarg);
+			break;
+		case 'i': //Uncertainty Multiplier for Program 9
+			uncertainty[8] = atof(optarg);
+			break;
+		case 'j': //Uncertainty Multiplier for Program 10
+			uncertainty[9] = atof(optarg);
+			break;
+		case 'k': //Uncertainty Multiplier for Program 11
+			uncertainty[10] = atof(optarg);
+			break;
+		case 'l': //Uncertainty Multiplier for Program 12
+			uncertainty[11] = atof(optarg);
+			break;
+		case 'm': //Uncertainty Multiplier for Program 13
+			uncertainty[12] = atof(optarg);
+			break;
+		case 'n': //Uncertainty Multiplier for Program 14
+			uncertainty[13] = atof(optarg);
+			break;
+		case 'o': //Uncertainty Multiplier for Program 15
+			uncertainty[14] = atof(optarg);
+			break;
+		case 'p': //Uncertainty Multiplier for Program 16
+			uncertainty[15] = atof(optarg);
+			break;
+		case 'q': //Uncertainty Multiplier for Program 17
+			uncertainty[16] = atof(optarg);
+			break;
+		case 'r': //Uncertainty Multiplier for Program 18
+			uncertainty[17] = atof(optarg);
+			break;
+		case 's': //Uncertainty Multiplier for Program 19
+			uncertainty[18] = atof(optarg);
+			break;
+		case 't': //Uncertainty Multiplier for Program 20
+			uncertainty[19] = atof(optarg);
+			break;
+		case 'u': //Uncertainty Multiplier for Program 21
+			uncertainty[20] = atof(optarg);
+			break;
+		case 'v': //Uncertainty Multiplier for Program 22
+			uncertainty[21] = atof(optarg);
 			break;
 		case '?':
 		default:
@@ -129,7 +196,7 @@ int main(int argc, char* argv[]) {
 
 	while (MOEA_Next_solution() == MOEA_SUCCESS) {
 		MOEA_Read_doubles(nvars, vars);
-		portfolio_problem(vars, objs, consts);
+		portfolio_problem(vars, objs, consts, uncertainty);
 		MOEA_Write(objs, consts);
 	}
 
