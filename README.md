@@ -12,8 +12,5 @@ These are necessary to compile the code as written.
 
 To compile and run:
 
-
-* Download the Borg source code. Put all Borg and Lake Source in the same directory.
-
-* Type the following command `make` to compile the Portfolio Function Evaluation code
+* Type the following command `make` to compile the Portfolio Function Evaluation code, move the resulting executable to the same working directory as the BORG executable
 
