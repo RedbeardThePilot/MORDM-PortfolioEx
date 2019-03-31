@@ -1,32 +1,14 @@
-/* LakeProblem_5Obj_1Const_Stoch.cpp
+/* main-portfolio.cpp
+ Adapted by Ryan McKennon-Kelly, Sept-Dec 2018
+ George Mason University
 
- Riddhi Singh, May, 2014
- The Pennsylvania State University
- rus197@psu.edu
-
- Adapted by Tori Ward, July 2014
- Cornell University
- vlw27@cornell.edu
-
- Adapted by Jonathan Herman and David Hadka, Sept-Dec 2014
- Cornell University and The Pennsylvania State University
-
- A multi-objective represention of the lake model from Carpenter et al., 1999
+ A multi-objective representation of a notional budget planning portfolio optimization
  This simulation is designed for optimization with either Borg or the MOEAFramework.
 
- Stochasticity is introduced by natural phosphorous inflows.
- These follow a lognormal distribution with specified mu and sigma.
-
  Decision Vector
- vars : anthropogenic pollution flow at previous time step - Size 100, Bounds (0.0,0.1)
+ vars : anthropogenic pollution flow at previous time step - Size 22, Bounds (0.0,<4)
 
- Objectives
- 1. minimize the maximum Phosphorous averaged over all lognormal draws in a given time period
- 2. maximize expected benefit from pollution
- 3. maximize the probability of meeting an inertia constraint
- 4. maximize Reliability
-
- */
+  */
 
 #include <stdio.h>
 #include <unistd.h>
@@ -38,7 +20,6 @@
 #include <boost/math/tools/roots.hpp>
 #include "moeaframework.h"
 #include "boostutil.h"
-#include "generate-scenarios.h"
 
 #include "modeldfn.h"
 
